@@ -56,7 +56,7 @@ const Footer = styled.footer`
   }
 
   @media (max-width: 768px) {
-    padding: 34px 16px calc(70px + env(safe-area-inset-bottom));
+    padding: 34px 16px calc(138px + env(safe-area-inset-bottom));
   }
 `
 
@@ -133,9 +133,17 @@ const FloatingActions = styled.div`
   gap: 10px;
 
   @media (max-width: 768px) {
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    gap: 8px;
+    right: 12px;
+    left: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    align-items: stretch;
+    gap: 9px;
+    padding: 10px;
+    border-radius: 18px;
+    border: 1px solid rgba(130, 163, 217, 0.28);
+    background: rgba(7, 13, 24, 0.72);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.36);
   }
 `;
 
@@ -144,6 +152,7 @@ const FloatingLegacyButton = styled.a`
   align-items: center;
   justify-content: center;
   width: 170px;
+  max-width: calc(100vw - 32px);
   gap: 8px;
   padding: 11px 14px;
   border-radius: 999px;
@@ -162,10 +171,11 @@ const FloatingLegacyButton = styled.a`
   }
 
   @media (max-width: 768px) {
-    width: 160px;
-    padding: 10px 12px;
-    font-size: 0.82rem;
-    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+    padding: 11px 14px;
+    font-size: 0.84rem;
+    gap: 7px;
   }
 `;
 
@@ -174,6 +184,7 @@ const FloatingContactButton = styled.a`
   align-items: center;
   justify-content: center;
   width: 170px;
+  max-width: calc(100vw - 32px);
   gap: 8px;
   padding: 12px 16px;
   border-radius: 999px;
@@ -192,17 +203,16 @@ const FloatingContactButton = styled.a`
   }
 
   @media (max-width: 768px) {
-    width: 160px;
-    padding: 11px 13px;
-    font-size: 0.86rem;
-    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    gap: 7px;
   }
 `;
 
 const FabText = styled.span`
-  @media (max-width: 480px) {
-    display: none;
-  }
+  white-space: nowrap;
 `;
 
 function App() {
@@ -230,7 +240,7 @@ function App() {
           ↗ <FabText>1기 랜딩 보기</FabText>
         </FloatingLegacyButton>
         <FloatingContactButton
-          href="https://open.kakao.com/o/sRmoDhii"
+          href="http://pf.kakao.com/_MDxhqX/chat"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="카카오톡 문의하기"

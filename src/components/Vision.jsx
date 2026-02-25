@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,7 +24,7 @@ const Section = styled.section`
   position: relative;
 
   @media (max-width: 768px) {
-    padding: 96px 16px 120px;
+    padding: 96px 16px 132px;
   }
 `;
 
@@ -79,17 +79,6 @@ const Subtitle = styled(motion.p)`
   }
 `;
 
-const SectionHint = styled(motion.p)`
-  margin-top: 14px;
-  color: rgba(170, 190, 224, 0.78);
-  font-size: 0.85rem;
-  letter-spacing: 0.03em;
-
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-  }
-`;
-
 const RailLayout = styled.div`
   display: grid;
   grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
@@ -99,6 +88,22 @@ const RailLayout = styled.div`
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+`;
+
+const DesktopOnly = styled.div`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileOnly = styled.div`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
 `;
 
@@ -132,21 +137,10 @@ const RailList = styled.div`
   gap: 8px;
 
   @media (max-width: 768px) {
-    flex-direction: row;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 4px 2px 10px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-
-    &::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(160, 183, 221, 0.42);
-      border-radius: 999px;
-    }
+    flex-direction: column;
+    gap: 8px;
+    overflow: visible;
+    padding: 0;
   }
 `;
 
@@ -157,11 +151,10 @@ const RailStep = styled(motion.div)`
   min-height: 56px;
 
   @media (max-width: 768px) {
-    min-width: min(76vw, 248px);
+    min-width: 0;
     grid-template-columns: 1fr;
     gap: 0;
     min-height: auto;
-    scroll-snap-align: center;
   }
 `;
 
@@ -256,7 +249,7 @@ const RailName = styled.span`
   font-weight: ${({ $active }) => ($active ? '700' : '600')};
 
   @media (max-width: 768px) {
-    white-space: nowrap;
+    white-space: normal;
     font-size: 0.92rem;
   }
 `;
@@ -288,6 +281,7 @@ const DetailPanel = styled.article`
   @media (max-width: 768px) {
     min-height: 400px;
     border-radius: 18px;
+    min-height: 0;
   }
 `;
 
@@ -308,7 +302,7 @@ const PanelBody = styled(motion.div)`
   touch-action: pan-y;
 
   @media (max-width: 768px) {
-    padding: 24px 22px;
+    padding: 22px 18px;
   }
 `;
 
@@ -317,6 +311,11 @@ const PanelMeta = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 22px;
+
+  @media (max-width: 768px) {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
 `;
 
 const ValueBadge = styled.span`
@@ -345,6 +344,7 @@ const PanelTitle = styled.h3`
   letter-spacing: -0.01em;
   margin-bottom: 14px;
   word-break: keep-all;
+  overflow-wrap: anywhere;
 
   @media (max-width: 768px) {
     font-size: clamp(1.35rem, 6.4vw, 1.75rem);
@@ -365,6 +365,7 @@ const PanelDesc = styled.p`
   font-size: 1.04rem;
   line-height: 1.75;
   word-break: keep-all;
+  overflow-wrap: anywhere;
 
   @media (max-width: 768px) {
     font-size: 0.95rem;
@@ -397,10 +398,11 @@ const Controls = styled.div`
   gap: 16px;
 
   @media (max-width: 768px) {
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 10px;
+    padding-top: 22px;
   }
 `;
 
@@ -408,6 +410,11 @@ const DotRow = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
 const Dot = styled.button`
@@ -422,17 +429,9 @@ const Dot = styled.button`
 const ArrowControls = styled.div`
   display: flex;
   gap: 10px;
-`;
-
-const SwipeHint = styled.p`
-  margin-top: 10px;
-  color: rgba(171, 193, 227, 0.72);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  display: none;
 
   @media (max-width: 768px) {
-    display: block;
+    justify-content: center;
   }
 `;
 
@@ -534,32 +533,11 @@ const visions = [
 
 const Vision = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const railItemRefs = useRef([]);
 
   const activeVision = visions[activeIndex];
 
   const goPrev = () => setActiveIndex((prev) => Math.max(prev - 1, 0));
   const goNext = () => setActiveIndex((prev) => Math.min(prev + 1, visions.length - 1));
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile) return;
-    const activeEl = railItemRefs.current[activeIndex];
-    if (activeEl) {
-      activeEl.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center'
-      });
-    }
-  }, [activeIndex, isMobile]);
 
   const handleKeyNavigation = (event) => {
     if ((event.key === 'ArrowDown' || event.key === 'ArrowRight') && activeIndex < visions.length - 1) {
@@ -567,15 +545,6 @@ const Vision = () => {
     }
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowLeft') && activeIndex > 0) {
-      setActiveIndex((prev) => prev - 1);
-    }
-  };
-
-  const handlePanelDragEnd = (event, { offset, velocity }) => {
-    const swipeThreshold = 70;
-    if ((offset.x < -swipeThreshold || velocity.x < -420) && activeIndex < visions.length - 1) {
-      setActiveIndex((prev) => prev + 1);
-    } else if ((offset.x > swipeThreshold || velocity.x > 420) && activeIndex > 0) {
       setActiveIndex((prev) => prev - 1);
     }
   };
@@ -606,19 +575,14 @@ const Vision = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            실행력, 완성도, 협업, 그리고 재미까지. 우리 팀이 제품을 만드는 방식을 7가지 비전으로 정리했습니다.
+            실행력, 완성도, 협업, 그리고 재미까지.
+            <br />
+            우리 팀이 제품을 만드는 방식을 7가지 비전으로 정리했습니다.
           </Subtitle>
-          <SectionHint
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            각 비전을 눌러 상세 내용을 확인해보세요.
-          </SectionHint>
         </Header>
 
-        <RailLayout>
+        <DesktopOnly>
+          <RailLayout>
           <RailNav
             role="region"
             aria-label="비전 레일"
@@ -635,7 +599,6 @@ const Vision = () => {
                 return (
                   <RailStep
                     key={vision.id}
-                    ref={(el) => { railItemRefs.current[idx] = el; }}
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-80px' }}
@@ -682,10 +645,6 @@ const Vision = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25 }}
-                drag={isMobile ? 'x' : false}
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.12}
-                onDragEnd={handlePanelDragEnd}
               >
                 <PanelMeta>
                   <ValueBadge $color={activeVision.color}>Vision</ValueBadge>
@@ -723,11 +682,63 @@ const Vision = () => {
                     </ArrowButton>
                   </ArrowControls>
                 </Controls>
-                <SwipeHint>모바일에서는 카드를 좌우로 스와이프할 수 있습니다.</SwipeHint>
               </PanelBody>
             </AnimatePresence>
           </DetailPanel>
-        </RailLayout>
+          </RailLayout>
+        </DesktopOnly>
+
+        <MobileOnly>
+          <DetailPanel $color={activeVision.color}>
+            <PanelGlow $color={activeVision.color} />
+            <AnimatePresence mode="wait">
+              <PanelBody
+                key={`mobile-${activeVision.id}`}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.25 }}
+              >
+                <PanelMeta>
+                  <ValueBadge $color={activeVision.color}>Vision</ValueBadge>
+                  <IndexText>{activeIndex + 1} / {visions.length}</IndexText>
+                </PanelMeta>
+
+                <PanelTitle>{activeVision.icon} {activeVision.title}</PanelTitle>
+                <PanelSubtitle $color={activeVision.color}>{activeVision.titleKo}</PanelSubtitle>
+                <PanelDesc>{activeVision.desc}</PanelDesc>
+
+                <KeywordList>
+                  {activeVision.keywords.map((keyword) => (
+                    <Keyword key={keyword} $color={activeVision.color}>{keyword}</Keyword>
+                  ))}
+                </KeywordList>
+
+                <Controls>
+                  <DotRow>
+                    {visions.map((_, idx) => (
+                      <Dot
+                        key={idx}
+                        $active={idx === activeIndex}
+                        onClick={() => setActiveIndex(idx)}
+                        aria-label={`Go to vision ${idx + 1}`}
+                      />
+                    ))}
+                  </DotRow>
+
+                  <ArrowControls>
+                    <ArrowButton onClick={goPrev} disabled={activeIndex === 0} aria-label="Previous vision">
+                      ‹
+                    </ArrowButton>
+                    <ArrowButton onClick={goNext} disabled={activeIndex === visions.length - 1} aria-label="Next vision">
+                      ›
+                    </ArrowButton>
+                  </ArrowControls>
+                </Controls>
+              </PanelBody>
+            </AnimatePresence>
+          </DetailPanel>
+        </MobileOnly>
       </Container>
     </Section>
   );

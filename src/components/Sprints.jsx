@@ -25,7 +25,7 @@ const Section = styled.section`
   overflow: hidden;
 
   @media (max-width: 768px) {
-    padding: 96px 16px 120px;
+    padding: 96px 16px 132px;
   }
 `;
 
@@ -142,30 +142,33 @@ const CarouselContainer = styled(motion.div)`
   transform-style: preserve-3d;
   
   @media (max-width: 768px) {
-    height: 510px;
-  }
-
-  @media (max-width: 480px) {
-    height: 492px;
+    perspective: none;
+    transform-style: flat;
+    height: auto;
+    min-height: 0;
+    display: block;
+    max-width: 560px;
   }
 `;
 
 const CarouselCard = styled(motion.article)`
-  position: absolute;
-  width: clamp(280px, 31vw, 390px);
-  height: 490px;
+  position: ${({ $isMobile }) => ($isMobile ? 'relative' : 'absolute')};
+  width: ${({ $isMobile }) => ($isMobile ? '100%' : 'clamp(280px, 31vw, 390px)')};
+  height: ${({ $isMobile }) => ($isMobile ? 'auto' : '490px')};
+  min-height: ${({ $isMobile }) => ($isMobile ? '420px' : '0')};
   background: linear-gradient(145deg, rgba(16, 20, 31, 0.96), rgba(6, 9, 15, 0.94));
   border: 1px solid ${({ $isActive, $color }) => ($isActive ? withAlpha($color, 0.58) : 'rgba(255, 255, 255, 0.08)')};
   border-radius: 24px;
-  padding: 30px 34px 34px;
-  cursor: grab;
-  touch-action: pan-y;
+  padding: ${({ $isMobile }) => ($isMobile ? '24px 20px 24px' : '30px 34px 34px')};
+  cursor: ${({ $isMobile }) => ($isMobile ? 'default' : 'grab')};
+  touch-action: ${({ $isMobile }) => ($isMobile ? 'auto' : 'pan-y')};
   box-shadow: ${({ $isActive, $color }) => ($isActive ? `0 22px 55px ${withAlpha($color, 0.3)}` : '0 12px 30px rgba(0, 0, 0, 0.55)')};
   display: flex;
   flex-direction: column;
   transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
   backdrop-filter: blur(8px);
   overflow: hidden;
+  ${({ $isMobile, $isActive }) => $isMobile && !$isActive && 'display: none;'}
 
   &::before {
     content: '';
@@ -198,13 +201,7 @@ const CarouselCard = styled(motion.article)`
     z-index: 20 !important;
   `}
 
-  @media (max-width: 768px) {
-    width: min(86vw, 360px);
-    height: 468px;
-    padding: 26px 24px 28px;
-  }
-
-  opacity: ${({ $isActive }) => ($isActive ? 1 : 0.72)};
+  opacity: ${({ $isMobile, $isActive }) => ($isMobile ? ($isActive ? 1 : 0) : ($isActive ? 1 : 0.72))};
 
   h3 {
     color: #fff;
@@ -218,7 +215,7 @@ const CarouselCard = styled(motion.article)`
     line-height: 1.2;
     position: relative;
     z-index: 1;
-    white-space: nowrap;
+    white-space: normal;
 
     @media (max-width: 768px) {
       font-size: clamp(1.22rem, 5.4vw, 1.44rem);
@@ -247,6 +244,11 @@ const CarouselCard = styled(motion.article)`
       background: rgba(166, 186, 220, 0.4);
       border-radius: 999px;
     }
+
+    @media (max-width: 768px) {
+      overflow-y: visible;
+      padding-right: 0;
+    }
   }
 
   li {
@@ -256,6 +258,7 @@ const CarouselCard = styled(motion.article)`
     position: relative;
     line-height: 1.5;
     word-break: keep-all;
+    overflow-wrap: anywhere;
 
     &::before {
       content: '';
@@ -304,73 +307,72 @@ const SlideIndex = styled.span`
   font-weight: 600;
 `;
 
+const NavigationRow = styled.div`
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  width: min(980px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 20;
+
+  @media (max-width: 768px) {
+    margin-top: 20px;
+    gap: 12px;
+    grid-template-columns: auto 1fr auto;
+  }
+`;
+
 const Indicators = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 40px;
-  position: relative;
-  z-index: 20;
+  gap: 8px;
+  min-width: 0;
 `;
 
 const Dot = styled.button`
-  width: ${({ $active }) => ($active ? '28px' : '10px')};
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(102, 252, 241, 0.45)' : 'rgba(255, 255, 255, 0.14)')};
-  background: ${({ $active }) => ($active ? 'linear-gradient(90deg, #66fcf1, #8fc9ff)' : 'rgba(255, 255, 255, 0.22)')};
-  box-shadow: ${({ $active }) => ($active ? '0 0 18px rgba(102, 252, 241, 0.5)' : 'none')};
-  cursor: pointer;
-  transition: all 0.25s ease;
-  
-  &:hover {
-    background: ${({ $active }) => ($active ? 'linear-gradient(90deg, #66fcf1, #8fc9ff)' : 'rgba(255, 255, 255, 0.4)')};
-    transform: translateY(-1px);
-  }
-`;
-
-const ArrowControls = styled.div`
-  margin-top: 18px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
+  width: ${({ $active }) => ($active ? '26px' : '9px')};
+  height: 9px;
+  border-radius: 999px;
+  background: ${({ $active }) => ($active ? 'linear-gradient(90deg, #66fcf1, #8fc9ff)' : 'rgba(255, 255, 255, 0.24)')};
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(102, 252, 241, 0.48)' : 'rgba(255, 255, 255, 0.15)')};
+  transition: all 0.2s ease;
 `;
 
 const ArrowButton = styled.button`
-  width: 42px;
-  height: 42px;
+  width: 74px;
+  height: 74px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid rgba(113, 186, 255, 0.3);
+  background: linear-gradient(150deg, rgba(10, 19, 34, 0.86), rgba(5, 11, 22, 0.78));
   color: rgba(241, 246, 255, 0.9);
-  font-size: 1.15rem;
+  font-size: 2rem;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.24s ease;
 
   &:hover {
-    background: rgba(102, 252, 241, 0.13);
-    border-color: rgba(102, 252, 241, 0.42);
+    background: linear-gradient(150deg, rgba(15, 31, 55, 0.92), rgba(6, 16, 30, 0.86));
+    border-color: rgba(119, 219, 255, 0.58);
+    box-shadow: 0 0 24px rgba(107, 212, 255, 0.26);
   }
 
   &:disabled {
     opacity: 0.38;
     cursor: not-allowed;
   }
-`;
-
-const SwipeHint = styled.p`
-  margin-top: 10px;
-  text-align: center;
-  color: rgba(171, 193, 227, 0.72);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  display: none;
 
   @media (max-width: 768px) {
-    display: block;
+    width: 52px;
+    height: 52px;
+    font-size: 1.5rem;
+    border-width: 1.5px;
   }
 `;
 
@@ -453,10 +455,29 @@ const sprintData = {
   ]
 };
 
+const mobileCardVariants = {
+  enter: (direction) => ({
+    x: direction >= 0 ? 64 : -64,
+    opacity: 0,
+    scale: 0.97
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1
+  },
+  exit: (direction) => ({
+    x: direction >= 0 ? -64 : 64,
+    opacity: 0,
+    scale: 0.97
+  })
+};
+
 const Sprints = () => {
   const [activeTab, setActiveTab] = useState('dev');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [mobileDirection, setMobileDirection] = useState(1);
   const currentSprintCount = sprintData[activeTab].length;
 
   useEffect(() => {
@@ -469,14 +490,21 @@ const Sprints = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setActiveIndex(0);
+    setMobileDirection(1);
+  };
+
+  const goToIndex = (nextIndex) => {
+    if (nextIndex < 0 || nextIndex >= currentSprintCount || nextIndex === activeIndex) return;
+    setMobileDirection(nextIndex > activeIndex ? 1 : -1);
+    setActiveIndex(nextIndex);
   };
 
   const handleDragEnd = (e, { offset, velocity }) => {
     const swipeThreshold = 70;
     if ((offset.x < -swipeThreshold || velocity.x < -420) && activeIndex < currentSprintCount - 1) {
-      setActiveIndex((prev) => prev + 1);
+      goToIndex(activeIndex + 1);
     } else if ((offset.x > swipeThreshold || velocity.x > 420) && activeIndex > 0) {
-      setActiveIndex((prev) => prev - 1);
+      goToIndex(activeIndex - 1);
     }
   };
 
@@ -519,11 +547,11 @@ const Sprints = () => {
 
   const handleKeyNavigation = (event) => {
     if (event.key === 'ArrowRight' && activeIndex < currentSprintCount - 1) {
-      setActiveIndex((prev) => prev + 1);
+      goToIndex(activeIndex + 1);
     }
 
     if (event.key === 'ArrowLeft' && activeIndex > 0) {
-      setActiveIndex((prev) => prev - 1);
+      goToIndex(activeIndex - 1);
     }
   };
 
@@ -578,64 +606,96 @@ const Sprints = () => {
             tabIndex={0}
             onKeyDown={handleKeyNavigation}
           >
-            {sprintData[activeTab].map((sprint, idx) => (
-              <CarouselCard
-                key={idx}
-                $isActive={idx === activeIndex}
-                $color={sprint.color}
-                onClick={() => setActiveIndex(idx)}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.14}
-                onDragEnd={handleDragEnd}
-                initial={false}
-                animate={calculateTransform(idx)}
-                transition={{ type: 'spring', stiffness: 180, damping: 24 }}
-                aria-selected={idx === activeIndex}
-              >
-                <CardMeta>
-                  <TrackBadge $color={sprint.color}>Track</TrackBadge>
-                  <SlideIndex>{idx + 1} / {currentSprintCount}</SlideIndex>
-                </CardMeta>
-                <h3>{sprint.title}</h3>
-                <ul>
-                  {sprint.items.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </CarouselCard>
-            ))}
+            {isMobile ? (
+              <AnimatePresence custom={mobileDirection} mode="wait" initial={false}>
+                <CarouselCard
+                  key={`${activeTab}-${activeIndex}`}
+                  custom={mobileDirection}
+                  variants={mobileCardVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.32, ease: 'easeOut' }}
+                  $isActive
+                  $color={sprintData[activeTab][activeIndex].color}
+                  $isMobile
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.14}
+                  onDragEnd={handleDragEnd}
+                  aria-selected
+                >
+                  <CardMeta>
+                    <TrackBadge $color={sprintData[activeTab][activeIndex].color}>Track</TrackBadge>
+                    <SlideIndex>{activeIndex + 1} / {currentSprintCount}</SlideIndex>
+                  </CardMeta>
+                  <h3>{sprintData[activeTab][activeIndex].title}</h3>
+                  <ul>
+                    {sprintData[activeTab][activeIndex].items.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </CarouselCard>
+              </AnimatePresence>
+            ) : (
+              sprintData[activeTab].map((sprint, idx) => (
+                <CarouselCard
+                  key={idx}
+                  $isActive={idx === activeIndex}
+                  $color={sprint.color}
+                  $isMobile={false}
+                  onClick={() => setActiveIndex(idx)}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.14}
+                  onDragEnd={handleDragEnd}
+                  initial={false}
+                  animate={calculateTransform(idx)}
+                  transition={{ type: 'spring', stiffness: 180, damping: 24 }}
+                  aria-selected={idx === activeIndex}
+                >
+                  <CardMeta>
+                    <TrackBadge $color={sprint.color}>Track</TrackBadge>
+                    <SlideIndex>{idx + 1} / {currentSprintCount}</SlideIndex>
+                  </CardMeta>
+                  <h3>{sprint.title}</h3>
+                  <ul>
+                    {sprint.items.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </CarouselCard>
+              ))
+            )}
           </CarouselContainer>
         </AnimatePresence>
 
-        <Indicators>
-          {sprintData[activeTab].map((_, idx) => (
-            <Dot
-              key={idx}
-              $active={idx === activeIndex}
-              onClick={() => setActiveIndex(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </Indicators>
-        <ArrowControls>
+        <NavigationRow>
           <ArrowButton
-            onClick={() => setActiveIndex((prev) => Math.max(prev - 1, 0))}
+            onClick={() => goToIndex(activeIndex - 1)}
             disabled={activeIndex === 0}
             aria-label="Previous sprint"
           >
             ‹
           </ArrowButton>
+          <Indicators>
+            {sprintData[activeTab].map((_, idx) => (
+              <Dot
+                key={idx}
+                $active={idx === activeIndex}
+                onClick={() => goToIndex(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </Indicators>
           <ArrowButton
-            onClick={() => setActiveIndex((prev) => Math.min(prev + 1, currentSprintCount - 1))}
+            onClick={() => goToIndex(activeIndex + 1)}
             disabled={activeIndex === currentSprintCount - 1}
             aria-label="Next sprint"
           >
             ›
           </ArrowButton>
-        </ArrowControls>
-        <SwipeHint>모바일에서는 카드를 좌우로 넘겨 스프린트를 탐색하세요.</SwipeHint>
-
+        </NavigationRow>
       </Container>
     </Section>
   );
