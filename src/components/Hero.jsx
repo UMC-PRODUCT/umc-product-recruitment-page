@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import productLogo from '../assets/productLogo.png';
@@ -284,6 +284,74 @@ const CenterGlow = styled.div`
   }
 `;
 
+const ScrollGuide = styled(motion.button)`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(130, 199, 255, 0.36);
+  background: rgba(8, 20, 38, 0.66);
+  color: rgba(217, 233, 255, 0.92);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  margin-top: 14px;
+
+  &:hover {
+    border-color: rgba(124, 238, 255, 0.72);
+    background: rgba(12, 28, 49, 0.84);
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 0.74rem;
+  }
+`;
+
+const ScrollDot = styled.span`
+  width: 18px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 213, 255, 0.5);
+  display: inline-flex;
+  justify-content: center;
+  padding-top: 5px;
+  position: relative;
+
+  &::after {
+    content: '';
+    width: 4px;
+    height: 7px;
+    border-radius: 999px;
+    background: #73e9ff;
+    animation: scrollDotMove 1.35s ease-in-out infinite;
+  }
+
+  @keyframes scrollDotMove {
+    0% {
+      opacity: 0;
+      transform: translateY(0);
+    }
+    35% {
+      opacity: 1;
+      transform: translateY(5px);
+    }
+    80% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(0);
+    }
+  }
+`;
+
 const scheduleRows = [
   {
     title: '모집',
@@ -300,6 +368,25 @@ const scheduleRows = [
 ]
 
 const Hero = () => {
+  const [showScrollGuide, setShowScrollGuide] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setShowScrollGuide(window.scrollY < 140);
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const handleGuideClick = () => {
+    window.scrollTo({
+      top: window.innerHeight * 0.9,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <Section>
       <CenterGlow />
@@ -393,6 +480,20 @@ const Hero = () => {
             </svg>
           </PrimaryButton>
         </ButtonGroup>
+        {showScrollGuide && (
+          <ScrollGuide
+            type="button"
+            onClick={handleGuideClick}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.25 }}
+            aria-label="아래 콘텐츠로 스크롤"
+          >
+            <ScrollDot />
+            아래로 스크롤
+          </ScrollGuide>
+        )}
       </Content>
     </Section>
   );
