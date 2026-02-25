@@ -5,12 +5,19 @@ import WhatWeBuild from './components/WhatWeBuild'
 import Sprints from './components/Sprints'
 import Vision from './components/Vision'
 import Apply from './components/Apply'
+import LegacyLandingSection from './components/LegacyLandingSection'
+import TrackComparisonSection from './components/TrackComparisonSection'
+import FaqSection from './components/FaqSection'
 
 const AppContainer = styled.div`
   width: 100%;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
 
   &::before {
     content: '';
@@ -134,48 +141,15 @@ const FloatingActions = styled.div`
 
   @media (max-width: 768px) {
     right: 12px;
-    left: 12px;
+    left: auto;
     bottom: calc(12px + env(safe-area-inset-bottom));
-    align-items: stretch;
-    gap: 9px;
-    padding: 10px;
-    border-radius: 18px;
-    border: 1px solid rgba(130, 163, 217, 0.28);
-    background: rgba(7, 13, 24, 0.72);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.36);
-  }
-`;
-
-const FloatingLegacyButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 170px;
-  max-width: calc(100vw - 32px);
-  gap: 8px;
-  padding: 11px 14px;
-  border-radius: 999px;
-  background: rgba(14, 26, 45, 0.92);
-  color: rgba(227, 239, 255, 0.94);
-  border: 1px solid rgba(134, 196, 255, 0.34);
-  font-size: 0.86rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    border-color: rgba(151, 224, 255, 0.68);
-    background: rgba(20, 36, 60, 0.95);
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    max-width: 100%;
-    padding: 11px 14px;
-    font-size: 0.84rem;
-    gap: 7px;
+    align-items: flex-end;
+    gap: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
   }
 `;
 
@@ -203,11 +177,13 @@ const FloatingContactButton = styled.a`
   }
 
   @media (max-width: 768px) {
-    width: 100%;
-    max-width: 100%;
-    padding: 12px 14px;
-    font-size: 0.88rem;
-    gap: 7px;
+    width: auto;
+    max-width: none;
+    min-width: 152px;
+    padding: 11px 14px;
+    font-size: 0.82rem;
+    gap: 6px;
+    box-shadow: 0 10px 24px rgba(214, 185, 0, 0.42);
   }
 `;
 
@@ -220,8 +196,11 @@ function App() {
     <AppContainer>
       <Hero />
       <WhatWeBuild />
+      <LegacyLandingSection />
       <Sprints />
       <Vision />
+      <TrackComparisonSection />
+      <FaqSection />
       <Apply />
       <Footer>
         <FooterInner>
@@ -231,14 +210,6 @@ function App() {
         </FooterInner>
       </Footer>
       <FloatingActions>
-        <FloatingLegacyButton
-          href="https://product.umc.it.kr/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="1기 랜딩 페이지 보기"
-        >
-          ↗ <FabText>1기 랜딩 보기</FabText>
-        </FloatingLegacyButton>
         <FloatingContactButton
           href="http://pf.kakao.com/_MDxhqX/chat"
           target="_blank"

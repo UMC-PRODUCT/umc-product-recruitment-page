@@ -38,11 +38,63 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
   padding: 0 20px;
 
   @media (max-width: 768px) {
     padding: 0 4px;
+  }
+`;
+
+const StatusStrip = styled(motion.div)`
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: min(880px, 100%);
+  margin-bottom: 24px;
+`;
+
+const StatusBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 14px;
+  border: 1px solid rgba(142, 211, 255, 0.35);
+  background: rgba(16, 31, 54, 0.7);
+  color: #eaf3ff;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+
+  strong {
+    color: #66fcf1;
+    font-size: 0.86rem;
+  }
+`;
+
+const LiveDot = styled.span`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #66fcf1;
+  box-shadow: 0 0 0 0 rgba(102, 252, 241, 0.55);
+  animation: ping 2.1s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  @keyframes ping {
+    0% {
+      box-shadow: 0 0 0 0 rgba(102, 252, 241, 0.45);
+    }
+
+    70% {
+      box-shadow: 0 0 0 12px rgba(102, 252, 241, 0);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(102, 252, 241, 0);
+    }
   }
 `;
 
@@ -52,7 +104,7 @@ const LogoContainer = styled(motion.div)`
   margin-bottom: 18px;
   position: relative;
   z-index: 10;
-  
+
   img {
     width: 100%;
     height: auto;
@@ -74,14 +126,14 @@ const Badge = styled(motion.span)`
   border-radius: 50px;
   font-size: clamp(0.92rem, 1.2vw, 1.05rem);
   font-weight: 550;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   border: 1px solid rgba(133, 203, 255, 0.3);
   letter-spacing: 0.06em;
 
   @media (max-width: 768px) {
     font-size: 0.84rem;
     padding: 7px 14px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -94,7 +146,7 @@ const Title = styled(motion.h1)`
   font-weight: 800;
   color: #fff;
   word-break: keep-all;
-  
+
   span {
     background: linear-gradient(95deg, #88b6ff, #66fcf1 45%, #7399ff);
     -webkit-background-clip: text;
@@ -139,76 +191,31 @@ const Subtitle = styled(motion.p)`
   }
 `;
 
-const SchedulePanel = styled(motion.div)`
-  margin-top: 12px;
-  width: min(740px, 100%);
-  padding: 16px 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(134, 205, 255, 0.28);
-  background: linear-gradient(145deg, rgba(16, 29, 48, 0.64), rgba(9, 16, 30, 0.82));
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-  text-align: left;
-
-  @media (max-width: 768px) {
-    margin-top: 20px;
-    padding: 14px 14px;
-    border-radius: 14px;
-  }
-`;
-
-const ScheduleTitle = styled.p`
-  color: #8deaff;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-`;
-
-const ScheduleRow = styled.p`
-  color: rgba(223, 235, 252, 0.92);
-  font-size: 0.96rem;
-  line-height: 1.55;
-  word-break: keep-all;
-
-  strong {
-    color: #ffffff;
-    margin-right: 8px;
-  }
-
-  & + & {
-    margin-top: 4px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 0.88rem;
-    line-height: 1.5;
-  }
-`;
-
 const ButtonGroup = styled(motion.div)`
-  margin-top: 54px;
+  margin-top: 34px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 
   @media (max-width: 768px) {
-    margin-top: 36px;
-    gap: 12px;
+    margin-top: 28px;
+    gap: 10px;
     width: 100%;
-    max-width: 340px;
+    max-width: 360px;
   }
 `;
 
-const ApplyButton = styled.a`
+const PrimaryButton = styled.a`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 42px;
+  width: 100%;
+  max-width: 320px;
+  padding: 16px 38px;
   background: linear-gradient(120deg, #f4f8ff, #dff5ff);
   color: #101827;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 700;
   border-radius: 50px;
   text-decoration: none;
@@ -219,32 +226,42 @@ const ApplyButton = styled.a`
     transform: translateY(-2px);
     box-shadow: 0 12px 32px rgba(128, 206, 255, 0.35);
   }
-  
+
   svg {
     transition: transform 0.3s ease;
   }
-  
+
   &:hover svg {
     transform: translateX(4px);
   }
+`;
 
-  @media (max-width: 768px) {
-    width: 100%;
-    font-size: 1.05rem;
-    padding: 15px 24px;
-    gap: 6px;
+const SecondaryButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(145, 206, 255, 0.42);
+  background: rgba(10, 22, 38, 0.42);
+  color: #e6f1ff;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  &:hover {
+    border-color: rgba(141, 235, 255, 0.72);
+    background: rgba(17, 32, 55, 0.66);
   }
 `;
 
-const StatusText = styled.div`
-  color: #ffd38a;
-  font-size: 1.1rem;
+const MiniText = styled.p`
+  color: #ffd89a;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
   font-weight: 600;
-  letter-spacing: 0.5px;
-
-  @media (max-width: 768px) {
-    font-size: 0.98rem;
-  }
 `;
 
 const CenterGlow = styled.div`
@@ -266,11 +283,39 @@ const CenterGlow = styled.div`
   }
 `;
 
+const scheduleRows = [
+  {
+    title: '모집',
+    value: '2026년 2월 26일(목) - 3월 1일(일)'
+  },
+  {
+    title: '서류 평가',
+    value: '2026년 3월 2일(월) - 3월 7일(토)'
+  }
+]
+
 const Hero = () => {
   return (
     <Section>
       <CenterGlow />
       <Content>
+        <StatusStrip
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+        >
+          <StatusBadge>
+            <LiveDot />
+            <strong>모집 중</strong>
+            UMC Product 2기 지금 합류하세요
+          </StatusBadge>
+          {scheduleRows.map((row) => (
+            <StatusBadge key={row.title}>
+              <strong>{row.title}</strong> {row.value}
+            </StatusBadge>
+          ))}
+        </StatusStrip>
+
         <LogoContainer
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{
@@ -280,15 +325,15 @@ const Hero = () => {
           }}
           transition={{
             opacity: { duration: 1 },
-            scale: { duration: 1, type: "spring", bounce: 0.4 },
-            y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+            scale: { duration: 1, type: 'spring', bounce: 0.4 },
+            y: { duration: 4, repeat: Infinity, ease: 'easeInOut' }
           }}
         >
           <motion.img
             src={productLogo}
             alt="UMC Product Logo"
             style={{
-              filter: "drop-shadow(0 0 30px rgba(102, 153, 255, 0.4))"
+              filter: 'drop-shadow(0 0 30px rgba(102, 153, 255, 0.4))'
             }}
           />
         </LogoContainer>
@@ -324,7 +369,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <ApplyButton
+          <PrimaryButton
             href="https://docs.google.com/forms/d/1sHW8V8WzdPl22VGLbab978OyEU2S6D-pCSIxMQ-nGw8/viewform?hl=ko"
             target="_blank"
             rel="noopener noreferrer"
@@ -333,17 +378,15 @@ const Hero = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
-          </ApplyButton>
-          <StatusText>모집 중!</StatusText>
-          <SchedulePanel
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.88 }}
+          </PrimaryButton>
+          <SecondaryButton
+            href="https://product.umc.it.kr/"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <ScheduleTitle>2기 진행 일정</ScheduleTitle>
-            <ScheduleRow><strong>모집</strong> 2026년 2월 26일(목) - 3월 1일(일)</ScheduleRow>
-            <ScheduleRow><strong>서류 평가</strong> 2026년 3월 2일(월) - 3월 7일(토)</ScheduleRow>
-          </SchedulePanel>
+            1기 랜딩 페이지 보기
+          </SecondaryButton>
+          <MiniText>📅 더 자세한 모집 일정은 하단에서 확인하세요.</MiniText>
         </ButtonGroup>
       </Content>
     </Section>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -60,9 +60,11 @@ const Title = styled(motion.h2)`
   margin-bottom: 18px;
   font-family: var(--font-heading);
   letter-spacing: -0.02em;
+  word-break: keep-all;
 
   @media (max-width: 768px) {
     font-size: 2.35rem;
+    line-height: 1.26;
   }
 `;
 
@@ -398,11 +400,7 @@ const Controls = styled.div`
   gap: 16px;
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding-top: 22px;
+    display: none;
   }
 `;
 
@@ -424,6 +422,39 @@ const Dot = styled.button`
   background: ${({ $active }) => ($active ? 'linear-gradient(90deg, #66fcf1, #8fc9ff)' : 'rgba(255, 255, 255, 0.24)')};
   border: 1px solid ${({ $active }) => ($active ? 'rgba(102, 252, 241, 0.48)' : 'rgba(255, 255, 255, 0.15)')};
   transition: all 0.2s ease;
+`;
+
+const ProgressHeader = styled.div`
+  margin-bottom: 14px;
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+const ProgressText = styled.p`
+  color: rgba(214, 232, 253, 0.92);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  text-align: center;
+`;
+
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(146, 175, 215, 0.28);
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div`
+  width: ${({ $percent }) => `${$percent}%`};
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8deaff, #79c2ff);
+  transition: width 0.25s ease;
 `;
 
 const ArrowControls = styled.div`
@@ -454,6 +485,36 @@ const ArrowButton = styled.button`
 
   &:disabled {
     opacity: 0.4;
+    cursor: not-allowed;
+  }
+`;
+
+const MobileNavigation = styled.div`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+  }
+`;
+
+const MobileArrowButton = styled.button`
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(122, 194, 255, 0.35);
+  background: rgba(11, 20, 36, 0.72);
+  color: #e5f3ff;
+  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    opacity: 0.35;
     cursor: not-allowed;
   }
 `;
@@ -531,21 +592,65 @@ const visions = [
   }
 ];
 
+const mobilePanelVariants = {
+  enter: (direction) => ({
+    x: direction >= 0 ? 54 : -54,
+    opacity: 0,
+    scale: 0.98
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1
+  },
+  exit: (direction) => ({
+    x: direction >= 0 ? -54 : 54,
+    opacity: 0,
+    scale: 0.98
+  })
+};
+
 const Vision = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileDirection, setMobileDirection] = useState(1);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const activeVision = visions[activeIndex];
 
-  const goPrev = () => setActiveIndex((prev) => Math.max(prev - 1, 0));
-  const goNext = () => setActiveIndex((prev) => Math.min(prev + 1, visions.length - 1));
+  const goToIndex = (nextIndex) => {
+    if (nextIndex < 0 || nextIndex >= visions.length || nextIndex === activeIndex) return;
+    setMobileDirection(nextIndex > activeIndex ? 1 : -1);
+    setActiveIndex(nextIndex);
+  };
+
+  const goPrev = () => goToIndex(activeIndex - 1);
+  const goNext = () => goToIndex(activeIndex + 1);
 
   const handleKeyNavigation = (event) => {
     if ((event.key === 'ArrowDown' || event.key === 'ArrowRight') && activeIndex < visions.length - 1) {
-      setActiveIndex((prev) => prev + 1);
+      goNext();
     }
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowLeft') && activeIndex > 0) {
-      setActiveIndex((prev) => prev - 1);
+      goPrev();
+    }
+  };
+
+  const handleDragEnd = (_, { offset, velocity }) => {
+    const swipeThreshold = 60;
+    if ((offset.x < -swipeThreshold || velocity.x < -420) && activeIndex < visions.length - 1) {
+      goNext();
+    }
+
+    if ((offset.x > swipeThreshold || velocity.x > 420) && activeIndex > 0) {
+      goPrev();
     }
   };
 
@@ -689,15 +794,27 @@ const Vision = () => {
         </DesktopOnly>
 
         <MobileOnly>
+          <ProgressHeader>
+            <ProgressText>{activeIndex + 1} / {visions.length}</ProgressText>
+            <ProgressBar>
+              <ProgressFill $percent={((activeIndex + 1) / visions.length) * 100} />
+            </ProgressBar>
+          </ProgressHeader>
           <DetailPanel $color={activeVision.color}>
             <PanelGlow $color={activeVision.color} />
-            <AnimatePresence mode="wait">
+            <AnimatePresence custom={mobileDirection} mode="wait" initial={false}>
               <PanelBody
                 key={`mobile-${activeVision.id}`}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25 }}
+                custom={mobileDirection}
+                variants={mobilePanelVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.12}
+                onDragEnd={isMobile ? handleDragEnd : undefined}
               >
                 <PanelMeta>
                   <ValueBadge $color={activeVision.color}>Vision</ValueBadge>
@@ -713,31 +830,27 @@ const Vision = () => {
                     <Keyword key={keyword} $color={activeVision.color}>{keyword}</Keyword>
                   ))}
                 </KeywordList>
-
-                <Controls>
-                  <DotRow>
-                    {visions.map((_, idx) => (
-                      <Dot
-                        key={idx}
-                        $active={idx === activeIndex}
-                        onClick={() => setActiveIndex(idx)}
-                        aria-label={`Go to vision ${idx + 1}`}
-                      />
-                    ))}
-                  </DotRow>
-
-                  <ArrowControls>
-                    <ArrowButton onClick={goPrev} disabled={activeIndex === 0} aria-label="Previous vision">
-                      ‹
-                    </ArrowButton>
-                    <ArrowButton onClick={goNext} disabled={activeIndex === visions.length - 1} aria-label="Next vision">
-                      ›
-                    </ArrowButton>
-                  </ArrowControls>
-                </Controls>
               </PanelBody>
             </AnimatePresence>
           </DetailPanel>
+          <MobileNavigation>
+            <MobileArrowButton onClick={goPrev} disabled={activeIndex === 0} aria-label="Previous vision">
+              ‹
+            </MobileArrowButton>
+            <DotRow>
+              {visions.map((_, idx) => (
+                <Dot
+                  key={`mobile-dot-${idx}`}
+                  $active={idx === activeIndex}
+                  onClick={() => goToIndex(idx)}
+                  aria-label={`Go to vision ${idx + 1}`}
+                />
+              ))}
+            </DotRow>
+            <MobileArrowButton onClick={goNext} disabled={activeIndex === visions.length - 1} aria-label="Next vision">
+              ›
+            </MobileArrowButton>
+          </MobileNavigation>
         </MobileOnly>
       </Container>
     </Section>

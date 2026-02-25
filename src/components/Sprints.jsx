@@ -51,9 +51,11 @@ const Title = styled(motion.h2)`
   margin-bottom: 16px;
   font-family: var(--font-heading);
   letter-spacing: -0.02em;
+  word-break: keep-all;
 
   @media (max-width: 768px) {
     font-size: 2.35rem;
+    line-height: 1.26;
   }
 `;
 
@@ -89,6 +91,7 @@ const TabContainer = styled.div`
     gap: 8px;
     width: 100%;
     max-width: 420px;
+    margin: 0 auto 30px;
   }
 `;
 
@@ -155,11 +158,11 @@ const CarouselCard = styled(motion.article)`
   position: ${({ $isMobile }) => ($isMobile ? 'relative' : 'absolute')};
   width: ${({ $isMobile }) => ($isMobile ? '100%' : 'clamp(280px, 31vw, 390px)')};
   height: ${({ $isMobile }) => ($isMobile ? 'auto' : '490px')};
-  min-height: ${({ $isMobile }) => ($isMobile ? '420px' : '0')};
+  min-height: ${({ $isMobile }) => ($isMobile ? '380px' : '0')};
   background: linear-gradient(145deg, rgba(16, 20, 31, 0.96), rgba(6, 9, 15, 0.94));
   border: 1px solid ${({ $isActive, $color }) => ($isActive ? withAlpha($color, 0.58) : 'rgba(255, 255, 255, 0.08)')};
-  border-radius: 24px;
-  padding: ${({ $isMobile }) => ($isMobile ? '24px 20px 24px' : '30px 34px 34px')};
+  border-radius: ${({ $isMobile }) => ($isMobile ? '20px' : '24px')};
+  padding: ${({ $isMobile }) => ($isMobile ? '20px 16px 18px' : '30px 34px 34px')};
   cursor: ${({ $isMobile }) => ($isMobile ? 'default' : 'grab')};
   touch-action: ${({ $isMobile }) => ($isMobile ? 'auto' : 'pan-y')};
   box-shadow: ${({ $isActive, $color }) => ($isActive ? `0 22px 55px ${withAlpha($color, 0.3)}` : '0 12px 30px rgba(0, 0, 0, 0.55)')};
@@ -320,10 +323,51 @@ const NavigationRow = styled.div`
   z-index: 20;
 
   @media (max-width: 768px) {
-    margin-top: 20px;
+    margin-top: 14px;
     gap: 12px;
     grid-template-columns: auto 1fr auto;
   }
+`;
+
+const ProgressHeader = styled.div`
+  margin: 0 auto 18px;
+  width: min(640px, 100%);
+  text-align: center;
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+const ProgressMeta = styled.p`
+  color: rgba(212, 228, 249, 0.9);
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.06em;
+`;
+
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(146, 175, 215, 0.28);
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div`
+  width: ${({ $percent }) => `${$percent}%`};
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8deaff, #76c8ff);
+  transition: width 0.25s ease;
+`;
+
+const ProgressHint = styled.p`
+  margin-top: 8px;
+  color: rgba(179, 200, 227, 0.84);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
 `;
 
 const Indicators = styled.div`
@@ -344,13 +388,13 @@ const Dot = styled.button`
 `;
 
 const ArrowButton = styled.button`
-  width: 74px;
-  height: 74px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  border: 2px solid rgba(113, 186, 255, 0.3);
-  background: linear-gradient(150deg, rgba(10, 19, 34, 0.86), rgba(5, 11, 22, 0.78));
-  color: rgba(241, 246, 255, 0.9);
-  font-size: 2rem;
+  border: 1px solid rgba(122, 194, 255, 0.35);
+  background: rgba(11, 20, 36, 0.72);
+  color: #e5f3ff;
+  font-size: 1.75rem;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -369,10 +413,9 @@ const ArrowButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    width: 52px;
-    height: 52px;
-    font-size: 1.5rem;
-    border-width: 1.5px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
   }
 `;
 
@@ -567,15 +610,23 @@ const Sprints = () => {
           >
             스프린트 커리큘럼
           </Title>
-          <Subtitle
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-          >
-            실무 플로우를 압축한 트랙별 미션으로, 기획부터 구현과 배포까지 직접 완주합니다.
-          </Subtitle>
-        </Header>
+        <Subtitle
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+        >
+          실무 플로우를 압축한 트랙별 미션으로, 기획부터 구현과 배포까지 직접 완주합니다.
+        </Subtitle>
+
+        <ProgressHeader>
+          <ProgressMeta>{activeIndex + 1} / {currentSprintCount}</ProgressMeta>
+          <ProgressBar>
+            <ProgressFill $percent={((activeIndex + 1) / currentSprintCount) * 100} />
+          </ProgressBar>
+          <ProgressHint>좌우 버튼 또는 스와이프해서 스프린트를 전환하세요.</ProgressHint>
+        </ProgressHeader>
+      </Header>
 
         <TabContainer>
           <Tab
