@@ -51,27 +51,56 @@ const StatusStrip = styled(motion.div)`
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  width: min(880px, 100%);
-  margin-bottom: 24px;
+  gap: ${({ $top }) => ($top ? '12px' : '10px')};
+  width: ${({ $top }) => ($top ? 'min(760px, 100%)' : 'min(880px, 100%)')};
+  margin-top: ${({ $top }) => ($top ? '0' : '24px')};
+  margin-bottom: ${({ $top }) => ($top ? '16px' : '0')};
+
+  @media (min-width: 769px) {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: ${({ $top }) => ($top ? 'min(760px, 100%)' : 'min(980px, 100%)')};
+  }
+
+  @media (max-width: 768px) {
+    margin-top: ${({ $top }) => ($top ? '0' : '16px')};
+    margin-bottom: ${({ $top }) => ($top ? '10px' : '0')};
+  }
 `;
 
 const StatusBadge = styled.span`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 9px;
   border-radius: 999px;
-  padding: 8px 14px;
-  border: 1px solid rgba(142, 211, 255, 0.35);
-  background: rgba(16, 31, 54, 0.7);
+  padding: ${({ $top }) => ($top ? '9px 18px' : '10px 16px')};
+  border: 1px solid ${({ $join }) => ($join ? 'rgba(99, 241, 226, 0.48)' : 'rgba(142, 211, 255, 0.35)')};
+  background: ${({ $join }) => ($join ? 'linear-gradient(120deg, rgba(9, 33, 56, 0.86), rgba(12, 26, 47, 0.9))' : 'rgba(16, 31, 54, 0.7)')};
   color: #eaf3ff;
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
+  font-size: ${({ $top }) => ($top ? '0.84rem' : '0.88rem')};
+  letter-spacing: ${({ $top }) => ($top ? '0.02em' : '0.01em')};
   font-weight: 700;
+  min-height: 48px;
+  width: ${({ $top }) => ($top ? 'min(560px, 100%)' : 'auto')};
+  text-align: center;
 
   strong {
     color: #66fcf1;
-    font-size: 0.86rem;
+    font-size: ${({ $top }) => ($top ? '0.88rem' : '0.95rem')};
+    min-width: ${({ $top }) => ($top ? '76px' : '0')};
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-height: 44px;
+    font-size: ${({ $top }) => ($top ? '0.8rem' : '0.84rem')};
+    padding: ${({ $top }) => ($top ? '9px 12px' : '9px 14px')};
+
+    strong {
+      min-width: 0;
+      font-size: ${({ $top }) => ($top ? '0.84rem' : '0.9rem')};
+    }
   }
 `;
 
@@ -99,9 +128,9 @@ const LiveDot = styled.span`
 `;
 
 const LogoContainer = styled(motion.div)`
-  width: clamp(132px, 11vw, 186px);
+  width: clamp(120px, 10vw, 164px);
   height: auto;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
   position: relative;
   z-index: 10;
 
@@ -113,8 +142,8 @@ const LogoContainer = styled(motion.div)`
   }
 
   @media (max-width: 768px) {
-    width: clamp(110px, 28vw, 146px);
-    margin-bottom: 14px;
+    width: clamp(100px, 26vw, 132px);
+    margin-bottom: 12px;
   }
 `;
 
@@ -126,7 +155,7 @@ const Badge = styled(motion.span)`
   border-radius: 50px;
   font-size: clamp(0.92rem, 1.2vw, 1.05rem);
   font-weight: 550;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   border: 1px solid rgba(133, 203, 255, 0.3);
   letter-spacing: 0.06em;
 
@@ -140,7 +169,7 @@ const Badge = styled(motion.span)`
 const Title = styled(motion.h1)`
   font-size: clamp(3.2rem, 8.2vw, 5.5rem);
   line-height: 1.04;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
   letter-spacing: -0.02em;
   font-family: var(--font-heading);
   font-weight: 800;
@@ -172,15 +201,15 @@ const Title = styled(motion.h1)`
 const Subtitle = styled(motion.p)`
   font-size: clamp(1.08rem, 1.6vw, 1.4rem);
   color: rgba(219, 229, 245, 0.9);
-  max-width: 760px;
-  line-height: 1.72;
+  max-width: 720px;
+  line-height: 1.66;
   word-break: keep-all;
   padding: 0 8px;
 
   @media (max-width: 768px) {
     font-size: 1rem;
-    max-width: 94%;
-    line-height: 1.58;
+    max-width: 96%;
+    line-height: 1.56;
     padding: 0;
   }
 
@@ -192,11 +221,11 @@ const Subtitle = styled(motion.p)`
 `;
 
 const ButtonGroup = styled(motion.div)`
-  margin-top: 34px;
+  margin-top: 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 
   @media (max-width: 768px) {
     margin-top: 28px;
@@ -211,8 +240,8 @@ const PrimaryButton = styled.a`
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 320px;
-  padding: 16px 38px;
+  max-width: 328px;
+  padding: 16px 34px;
   background: linear-gradient(120deg, #f4f8ff, #dff5ff);
   color: #101827;
   font-size: 1.05rem;
@@ -234,34 +263,6 @@ const PrimaryButton = styled.a`
   &:hover svg {
     transform: translateX(4px);
   }
-`;
-
-const SecondaryButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 320px;
-  padding: 14px 24px;
-  border-radius: 999px;
-  border: 1px solid rgba(145, 206, 255, 0.42);
-  background: rgba(10, 22, 38, 0.42);
-  color: #e6f1ff;
-  text-decoration: none;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-
-  &:hover {
-    border-color: rgba(141, 235, 255, 0.72);
-    background: rgba(17, 32, 55, 0.66);
-  }
-`;
-
-const MiniText = styled.p`
-  color: #ffd89a;
-  font-size: 0.9rem;
-  letter-spacing: 0.02em;
-  font-weight: 600;
 `;
 
 const CenterGlow = styled.div`
@@ -290,7 +291,11 @@ const scheduleRows = [
   },
   {
     title: '서류 평가',
-    value: '2026년 3월 2일(월) - 3월 7일(토)'
+    value: '2026년 3월 2일(월) - 3월 6일(금)'
+  },
+  {
+    title: '합격 발표',
+    value: '2026년 3월 7일(토) 14시'
   }
 ]
 
@@ -299,23 +304,6 @@ const Hero = () => {
     <Section>
       <CenterGlow />
       <Content>
-        <StatusStrip
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-        >
-          <StatusBadge>
-            <LiveDot />
-            <strong>모집 중</strong>
-            UMC Product 2기 지금 합류하세요
-          </StatusBadge>
-          {scheduleRows.map((row) => (
-            <StatusBadge key={row.title}>
-              <strong>{row.title}</strong> {row.value}
-            </StatusBadge>
-          ))}
-        </StatusStrip>
-
         <LogoContainer
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{
@@ -364,6 +352,31 @@ const Hero = () => {
           동아리가 온전히 성장에만 집중할 수 있도록.
         </Subtitle>
 
+        <StatusStrip
+          $top
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+        >
+          {scheduleRows.map((row) => (
+            <StatusBadge $top key={row.title}>
+              <strong>{row.title}</strong> {row.value}
+            </StatusBadge>
+          ))}
+        </StatusStrip>
+
+        <StatusStrip
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+        >
+          <StatusBadge $join>
+            <LiveDot />
+            <strong>모집 중</strong>
+            UMC Product 2기 지금 합류하세요
+          </StatusBadge>
+        </StatusStrip>
+
         <ButtonGroup
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -379,14 +392,6 @@ const Hero = () => {
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </PrimaryButton>
-          <SecondaryButton
-            href="https://product.umc.it.kr/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            1기 랜딩 페이지 보기
-          </SecondaryButton>
-          <MiniText>📅 더 자세한 모집 일정은 하단에서 확인하세요.</MiniText>
         </ButtonGroup>
       </Content>
     </Section>
