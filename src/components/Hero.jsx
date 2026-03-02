@@ -235,6 +235,21 @@ const PrimaryButton = styled.a`
   &:hover svg {
     transform: translateX(4px);
   }
+
+  &[aria-disabled='true'],
+  &:disabled {
+    background: linear-gradient(120deg, #4b5365, #3a4353);
+    color: rgba(232, 238, 249, 0.82);
+    box-shadow: none;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &[aria-disabled='true']:hover,
+  &:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
 `;
 
 const CenterGlow = styled.div`
@@ -325,6 +340,7 @@ const ScrollDot = styled.span`
 `;
 
 const Hero = () => {
+  const isRecruiting = false;
   const [showScrollGuide, setShowScrollGuide] = useState(true);
 
   useEffect(() => {
@@ -401,23 +417,29 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <PrimaryButton
-            href="https://docs.google.com/forms/d/1sHW8V8WzdPl22VGLbab978OyEU2S6D-pCSIxMQ-nGw8/viewform?hl=ko"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            2기 지원하기
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </PrimaryButton>
+          {isRecruiting ? (
+            <PrimaryButton
+              href="https://docs.google.com/forms/d/1sHW8V8WzdPl22VGLbab978OyEU2S6D-pCSIxMQ-nGw8/viewform?hl=ko"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              2기 지원하기
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton as="button" type="button" disabled aria-disabled="true">
+              2기 모집 마감
+            </PrimaryButton>
+          )}
         </ButtonGroup>
 
         <JoinBadgeRow>
           <JoinBadge>
-            <LiveDot />
-            <strong>모집 중</strong>
-            UMC Product 2기 지금 합류하세요
+            {isRecruiting && <LiveDot />}
+            <strong>{isRecruiting ? '모집 중' : '모집 마감'}</strong>
+            {isRecruiting ? 'UMC Product 2기 지금 합류하세요' : 'UMC Product 2기 모집이 종료되었습니다'}
           </JoinBadge>
         </JoinBadgeRow>
 
