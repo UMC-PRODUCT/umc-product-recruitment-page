@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-const iosDocCover = new URL('../assets/docs/ios/iOS_merged-이미지-0.jpg', import.meta.url).href;
-const iosDocPage2 = new URL('../assets/docs/ios/iOS_merged-이미지-1.jpg', import.meta.url).href;
-const iosDesignDocCover = new URL('../assets/docs/ios-design/디자인_아요_최종본_page-0001.jpg', import.meta.url).href;
-const iosDesignDocPage2 = new URL('../assets/docs/ios-design/디자인_아요_최종본_page-0002.jpg', import.meta.url).href;
-const androidDocCover = new URL('../assets/docs/android/안드 최종_page-0001.jpg', import.meta.url).href;
-const androidDocPage2 = new URL('../assets/docs/android/안드 최종_page-0002.jpg', import.meta.url).href;
-const androidDesignDocCover = new URL('../assets/docs/android-design/디자인_안드_최종_page-0001.jpg', import.meta.url).href;
-const androidDesignDocPage2 = new URL('../assets/docs/android-design/디자인_안드_최종_page-0002.jpg', import.meta.url).href;
-const serverDocCover = new URL('../assets/docs/server/서버 최종_page-0001.jpg', import.meta.url).href;
-const serverDocPage2 = new URL('../assets/docs/server/서버 최종_page-0004.jpg', import.meta.url).href;
+const iosDocCover = new URL('../assets/docs/ios/io1.jpg', import.meta.url).href;
+const iosDocPage2 = new URL('../assets/docs/ios/io2.jpg', import.meta.url).href;
+const iosDesignDocCover = new URL('../assets/docs/ios-design/iod1.jpg', import.meta.url).href;
+const iosDesignDocPage2 = new URL('../assets/docs/ios-design/iod2.jpg', import.meta.url).href;
+const androidDocCover = new URL('../assets/docs/android/a1.jpg', import.meta.url).href;
+const androidDocPage2 = new URL('../assets/docs/android/a2.jpg', import.meta.url).href;
+const androidDesignDocCover = new URL('../assets/docs/android-design/ad1.jpg', import.meta.url).href;
+const androidDesignDocPage2 = new URL('../assets/docs/android-design/ad2.jpg', import.meta.url).href;
+const serverDocCover = new URL('../assets/docs/server/s1.jpg', import.meta.url).href;
+const serverDocPage2 = new URL('../assets/docs/server/s2.jpg', import.meta.url).href;
 
 const Section = styled.section`
   padding: 0 20px 120px;
