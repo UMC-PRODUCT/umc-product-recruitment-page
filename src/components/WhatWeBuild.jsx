@@ -491,7 +491,7 @@ const WhatWeBuild = () => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            UMC Product는 10기부터 실제 운영에 투입됩니다.
+            UMC PRODUCT는 10기부터 실제 운영에 투입됩니다.
             <br />
             UMC 챌린저와 운영진이 매일 사용하는 서비스를 당신이 직접 개선하고 확장하게 됩니다.
           </Description>

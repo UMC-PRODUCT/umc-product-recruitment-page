@@ -58,12 +58,17 @@ const JoinBadge = styled.span`
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.01em;
+  text-align: left;
 
   strong {
     color: #66fcf1;
   }
 
   @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    width: min(100%, 720px);
     font-size: 0.82rem;
     padding: 7px 12px;
   }
@@ -76,6 +81,65 @@ const JoinBadgeRow = styled.div`
   margin-top: 12px;
 `;
 
+const JoinBadgeLabel = styled.strong`
+  color: #66fcf1;
+  white-space: nowrap;
+  word-break: keep-all;
+  flex-shrink: 0;
+`;
+
+const JoinBadgeCopy = styled.span`
+  word-break: keep-all;
+
+  @media (max-width: 768px) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+`;
+
+const NoBreak = styled.span`
+  white-space: nowrap;
+`;
+
+const TrackSwitch = styled.nav`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(133, 203, 255, 0.28);
+  background: rgba(9, 22, 41, 0.72);
+  backdrop-filter: blur(10px);
+
+  @media (max-width: 768px) {
+    margin-bottom: 14px;
+  }
+`;
+
+const TrackLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: ${({ $active }) => ($active ? '#09111d' : 'rgba(226, 236, 249, 0.82)')};
+  background: ${({ $active }) => ($active ? 'linear-gradient(120deg, #e5f7ff, #b8f5ff)' : 'transparent')};
+  box-shadow: ${({ $active }) => ($active ? '0 10px 24px rgba(115, 233, 255, 0.18)' : 'none')};
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    color: ${({ $active }) => ($active ? '#09111d' : '#fff')};
+    background: ${({ $active }) => ($active ? 'linear-gradient(120deg, #e5f7ff, #b8f5ff)' : 'rgba(103, 172, 255, 0.14)')};
+  }
+`;
+
 const LiveDot = styled.span`
   width: 8px;
   height: 8px;
@@ -83,6 +147,7 @@ const LiveDot = styled.span`
   background: #66fcf1;
   box-shadow: 0 0 0 0 rgba(102, 252, 241, 0.55);
   animation: ping 2.1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  visibility: ${({ $hidden }) => ($hidden ? 'hidden' : 'visible')};
 
   @keyframes ping {
     0% {
@@ -339,8 +404,10 @@ const ScrollDot = styled.span`
   }
 `;
 
-const Hero = () => {
-  const isRecruiting = false;
+const Hero = ({ track }) => {
+  const { hero, key, trackLabel } = track;
+  const isRecruiting = hero.isRecruiting;
+  const hasApplyLink = Boolean(hero.applyHref);
   const [showScrollGuide, setShowScrollGuide] = useState(true);
 
   useEffect(() => {
@@ -379,19 +446,28 @@ const Hero = () => {
         >
           <motion.img
             src={productLogo}
-            alt="UMC Product Logo"
+            alt="UMC PRODUCT Logo"
             style={{
               filter: 'drop-shadow(0 0 30px rgba(102, 153, 255, 0.4))'
             }}
           />
         </LogoContainer>
 
+        <TrackSwitch aria-label="트랙 페이지 전환">
+          <TrackLink href="/a-track.html" $active={key === 'a'}>
+            A TRACK
+          </TrackLink>
+          <TrackLink href="/" $active={key === 'b'}>
+            B TRACK
+          </TrackLink>
+        </TrackSwitch>
+
         <Badge
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          University MakeUs Challenge
+          {hero.badge}
         </Badge>
 
         <Title
@@ -399,7 +475,9 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <span>UMC Product</span>
+          <span>UMC PRODUCT</span>
+          <br />
+          {trackLabel}
         </Title>
 
         <Subtitle
@@ -407,9 +485,17 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          흩어진 도구들은 하나로, 반복되는 업무는 자동으로.
-          <br />
-          동아리가 온전히 성장에만 집중할 수 있도록.
+          {hero.subtitle.split('\n').map((line, index) => (
+            <React.Fragment key={`${line}-${index}`}>
+              {index > 0 && <br />}
+              {line.split('PRODUCT 트랙').map((part, partIndex, array) => (
+                <React.Fragment key={`${line}-${index}-${partIndex}`}>
+                  {part}
+                  {partIndex < array.length - 1 && <NoBreak>PRODUCT 트랙</NoBreak>}
+                </React.Fragment>
+              ))}
+            </React.Fragment>
+          ))}
         </Subtitle>
 
         <ButtonGroup
@@ -417,29 +503,29 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          {isRecruiting ? (
+          {isRecruiting && hasApplyLink ? (
             <PrimaryButton
-              href="https://docs.google.com/forms/d/1sHW8V8WzdPl22VGLbab978OyEU2S6D-pCSIxMQ-nGw8/viewform?hl=ko"
+              href={hero.applyHref}
               target="_blank"
               rel="noopener noreferrer"
             >
-              2기 지원하기
+              {hero.recruitButtonText}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </PrimaryButton>
           ) : (
             <PrimaryButton as="button" type="button" disabled aria-disabled="true">
-              2기 모집 마감
+              {isRecruiting ? hero.recruitButtonText : hero.closedButtonText}
             </PrimaryButton>
           )}
         </ButtonGroup>
 
         <JoinBadgeRow>
           <JoinBadge>
-            {isRecruiting && <LiveDot />}
-            <strong>{isRecruiting ? '모집 중' : '모집 마감'}</strong>
-            {isRecruiting ? 'UMC Product 2기 지금 합류하세요' : 'UMC Product 2기 모집이 종료되었습니다'}
+            <LiveDot $hidden={!isRecruiting} />
+            <JoinBadgeLabel>{isRecruiting ? '모집 중' : '모집 마감'}</JoinBadgeLabel>
+            <JoinBadgeCopy>{isRecruiting ? hero.recruitStatusOpen : hero.recruitStatusClosed}</JoinBadgeCopy>
           </JoinBadge>
         </JoinBadgeRow>
 

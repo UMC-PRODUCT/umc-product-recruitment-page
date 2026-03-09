@@ -163,11 +163,21 @@ const StatusText = styled.div`
   letter-spacing: 0.03em;
 `;
 
-const Apply = () => {
-  const isRecruiting = false;
+const renderLines = (text) =>
+  text.split('\n').map((line, index) => (
+    <React.Fragment key={`${line}-${index}`}>
+      {index > 0 && <br />}
+      {line}
+    </React.Fragment>
+  ));
+
+const Apply = ({ track }) => {
+  const { apply } = track;
+  const isRecruiting = apply.isRecruiting;
+  const hasApplyLink = Boolean(apply.applyHref);
 
   return (
-    <Section>
+    <Section id="apply">
       <Container>
         <GlowRing
           animate={{
@@ -182,7 +192,7 @@ const Apply = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          Final Call
+          {apply.label}
         </Label>
 
         <Title
@@ -191,7 +201,7 @@ const Apply = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          이제, UMC Product와 함께할 시간입니다.
+          {apply.title}
         </Title>
 
         <Text
@@ -201,17 +211,9 @@ const Apply = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           {isRecruiting ? (
-            <>
-              여기까지 읽으셨다면 준비는 끝났습니다.
-              <br />
-              UMC Product에서 다음 변화를 함께 만들어요.
-            </>
+            renderLines(apply.openBody)
           ) : (
-            <>
-              UMC Product 2기 모집은 마감되었습니다.
-              <br />
-              다음 모집 공지를 기다려주세요.
-            </>
+            renderLines(apply.closedBody)
           )}
         </Text>
 
@@ -221,23 +223,23 @@ const Apply = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          {isRecruiting ? (
+          {isRecruiting && hasApplyLink ? (
             <ApplyButton
-              href="https://docs.google.com/forms/d/1sHW8V8WzdPl22VGLbab978OyEU2S6D-pCSIxMQ-nGw8/viewform?hl=ko"
+              href={apply.applyHref}
               target="_blank"
               rel="noopener noreferrer"
             >
-              2기 지원하기
+              {apply.recruitButtonText}
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </ApplyButton>
           ) : (
             <ApplyButton as="button" type="button" disabled aria-disabled="true">
-              2기 모집 마감
+              {isRecruiting ? apply.recruitButtonText : apply.closedButtonText}
             </ApplyButton>
           )}
-          <StatusText>{isRecruiting ? '모집 중!' : '모집이 종료되었습니다'}</StatusText>
+          <StatusText>{isRecruiting ? apply.statusOpen : apply.statusClosed}</StatusText>
         </ButtonGroup>
       </Container>
     </Section>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
 import Hero from './components/Hero'
 import WhatWeBuild from './components/WhatWeBuild'
@@ -8,6 +8,9 @@ import Apply from './components/Apply'
 import LegacyLandingSection from './components/LegacyLandingSection'
 import TrackComparisonSection from './components/TrackComparisonSection'
 import FaqSection from './components/FaqSection'
+import BTrackRecruitSections from './components/BTrackRecruitSections'
+import TechDocumentPreviewSection from './components/TechDocumentPreviewSection'
+import { getTrackConfig } from './data/tracks'
 
 const AppContainer = styled.div`
   width: 100%;
@@ -16,7 +19,7 @@ const AppContainer = styled.div`
   overflow: hidden;
 
   @media (max-width: 768px) {
-    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+    padding-bottom: calc(${({ $hasStickyApplyCta }) => ($hasStickyApplyCta ? '164px' : '92px')} + env(safe-area-inset-bottom));
   }
 
   &::before {
@@ -63,7 +66,7 @@ const Footer = styled.footer`
   }
 
   @media (max-width: 768px) {
-    padding: 34px 16px calc(138px + env(safe-area-inset-bottom));
+    padding: 34px 16px calc(${({ $hasStickyApplyCta }) => ($hasStickyApplyCta ? '206px' : '138px')} + env(safe-area-inset-bottom));
   }
 `
 
@@ -142,7 +145,7 @@ const FloatingActions = styled.div`
   @media (max-width: 768px) {
     right: 12px;
     left: auto;
-    bottom: calc(12px + env(safe-area-inset-bottom));
+    bottom: calc(${({ $hasStickyApplyCta }) => ($hasStickyApplyCta ? '88px' : '12px')} + env(safe-area-inset-bottom));
     align-items: flex-end;
     gap: 0;
     padding: 0;
@@ -191,25 +194,77 @@ const FabText = styled.span`
   white-space: nowrap;
 `;
 
+const MobileStickyApplyBar = styled.div`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 130;
+    padding: 10px;
+    border-radius: 22px;
+    border: 1px solid rgba(130, 206, 255, 0.24);
+    background: rgba(8, 16, 30, 0.86);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  }
+`;
+
+const MobileStickyApplyButton = styled.a`
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 16px;
+  border-radius: 16px;
+  background: linear-gradient(120deg, #f5f9ff, #dff5ff);
+  color: #101827;
+  text-decoration: none;
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow: 0 12px 28px rgba(128, 206, 255, 0.24);
+`;
+
 function App() {
+  const trackKey = document.documentElement.dataset.track ?? 'a'
+  const track = getTrackConfig(trackKey)
+  const hasStickyApplyCta = false
+
+  useEffect(() => {
+    document.title = track.pageTitle
+  }, [track.pageTitle])
+
   return (
-    <AppContainer>
-      <Hero />
-      <WhatWeBuild />
-      <LegacyLandingSection />
-      <Sprints />
-      <Vision />
-      <TrackComparisonSection />
-      <FaqSection />
-      <Apply />
-      <Footer>
+    <AppContainer $hasStickyApplyCta={hasStickyApplyCta}>
+      <Hero track={track} />
+      {track.key === 'b' ? (
+        <>
+          <BTrackRecruitSections track={track} />
+          <TechDocumentPreviewSection />
+        </>
+      ) : (
+        <>
+          <WhatWeBuild />
+          <LegacyLandingSection />
+          <Sprints />
+          <Vision />
+          <TrackComparisonSection />
+        </>
+      )}
+      <FaqSection track={track} />
+      <Apply track={track} />
+      <Footer $hasStickyApplyCta={hasStickyApplyCta}>
         <FooterInner>
-          <FooterBrand>UMC Product</FooterBrand>
-          <FooterCopy>&copy; 2026 UMC Product. All rights reserved.</FooterCopy>
+          <FooterBrand>UMC PRODUCT {track.trackLabel}</FooterBrand>
+          <FooterCopy>&copy; 2026 UMC PRODUCT. All rights reserved.</FooterCopy>
           <FooterYear>2026</FooterYear>
         </FooterInner>
       </Footer>
-      <FloatingActions>
+      <FloatingActions $hasStickyApplyCta={hasStickyApplyCta}>
         <FloatingContactButton
           href="http://pf.kakao.com/_MDxhqX/chat"
           target="_blank"
