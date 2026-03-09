@@ -87,7 +87,7 @@ export const trackConfigs = {
       overview: {
         label: 'About B Track',
         title: 'UMC PRODUCT B TRACK은 실제로 만들고 증명하는 트랙입니다.',
-        description: 'UMC PRODUCT는 단순히 커리큘럼을 따라가며 배우는 트랙이 아닙니다. 정해진 워크북을 풀고 끝나는 방식이 아니라, 실제 서비스를 만들기 위해 필요한 기준과 사고방식, 협업 방식, 그리고 각 파트의 역할과 가치를 직접 배우고 부딪히는 실전형 트랙입니다.',
+        description: 'UMC PRODUCT는 단순히 커리큘럼을 따라가며 배우는 트랙이 아닙니다. 정해진 워크북을 풀고 끝나는 방식이 아니라, 실제 프로덕트를 만들기 위해 필요한 학습 과제와 문제를 직접 해결하면서 기준과 사고방식, 협업 방식, 그리고 각 파트의 역할과 가치를 몸으로 익히는 실전형 트랙입니다.',
         landingHref: 'https://product.umc.it.kr/',
         landingText: 'UMC APP 랜딩 보기',
         highlights: [
